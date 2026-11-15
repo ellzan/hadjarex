@@ -2,6 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\ChangePassword;
+use App\Http\Middleware\EnsurePasswordIsChanged;
+use App\Http\Middleware\EnsureSessionNotExpired;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
@@ -31,7 +35,7 @@ class PanelPanelProvider extends PanelProvider
             ->brandName('Hadjar Express')
             ->brandLogo(fn () => view('filament.brand-logo'))
             ->brandLogoHeight('2.25rem')
-            ->login()
+            ->login(Login::class)
             ->colors([
                 'primary' => Color::hex('#D4AF37'),
                 'success' => Color::hex('#14532D'),
@@ -54,6 +58,7 @@ class PanelPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,
+                ChangePassword::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
@@ -72,6 +77,8 @@ class PanelPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                EnsureSessionNotExpired::class,
+                EnsurePasswordIsChanged::class,
             ]);
     }
 }
